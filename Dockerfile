@@ -5,6 +5,7 @@ WORKDIR /TLE
 RUN apt-get update
 RUN apt-get install -y git apt-utils sqlite3
 RUN apt-get install -y python3.8
+RUN apt-get install -y python3-pip
 RUN python3.8 -m pip install poetry
 RUN python3.8 -m poetry install
 
