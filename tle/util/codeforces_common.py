@@ -99,8 +99,8 @@ def is_contest_writer(contest_id, handle):
 
 
 _NONSTANDARD_CONTEST_INDICATORS = [
-    'wild', 'fools', 'surprise', 'unknown', 'friday', 'q#', 'testing',
-    'marathon', 'kotlin', 'onsite', 'experimental', 'abbyy']
+    'wild', 'fools', 'unrated', 'surprise', 'unknown', 'friday', 'q#', 'testing',
+    'marathon', 'kotlin', 'onsite', 'experimental', 'abbyy', 'icpc']
 
 
 def is_nonstandard_contest(contest):
@@ -161,7 +161,7 @@ class FindMemberFailedError(ResolveHandleError):
 class HandleNotRegisteredError(ResolveHandleError):
     def __init__(self, member):
         super().__init__(f'Codeforces handle for {member.mention} not found in database. '
-                          'Use ;handle identify <cfhandle> (where <cfhandle> needs to be replaced with your codeforces handle) to add yourself to the database')
+                          'Use ;handle identify <cfhandle> (where <cfhandle> needs to be replaced with your codeforces handle, e.g. ;handle identify tourist) to add yourself to the database')
 
 
 class HandleIsVjudgeError(ResolveHandleError):
@@ -242,6 +242,10 @@ async def resolve_handles(ctx, converter, handles, *, mincnt=1, maxcnt=5, defaul
         if handle.startswith('!'):
             # ! denotes Discord user
             member_identifier = handle[1:]
+            # suffix removal as quickfix for new username changes
+            if member_identifier[-2:] == '#0':
+                member_identifier = member_identifier[:-2]
+
             try:
                 member = await converter.convert(ctx, member_identifier)
             except commands.errors.CommandError:
